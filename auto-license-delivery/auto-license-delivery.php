@@ -1680,11 +1680,17 @@ class AutoLicenseDelivery {
                 }
             }
             
-            echo '<div class="ald-developer-footer">';
-            echo '<h4 style="margin: 0 0 10px 0; color: #1976d2;">👨‍💻 Geliştirici: BERAT K</h4>';
-            echo '<p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Bu eklenti BERAT K tarafından özel olarak geliştirilmiştir.</p>';
-            echo '<a href="https://wa.me/905395115632" class="ald-whatsapp-btn" target="_blank">📱 WhatsApp ile İletişim: 0539 511 56 32</a>';
-            echo '</div>';
+            // Güvenli geliştirici bilgilerini göster
+            if (class_exists('BeratKSecurityProtection')) {
+                $security = BeratKSecurityProtection::get_instance();
+                echo $security->display_secure_developer_info('footer');
+            } else {
+                echo '<div class="ald-developer-footer">';
+                echo '<h4 style="margin: 0 0 10px 0; color: #1976d2;">👨‍💻 Geliştirici: BERAT K</h4>';
+                echo '<p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Bu eklenti BERAT K tarafından özel olarak geliştirilmiştir.</p>';
+                echo '<a href="https://wa.me/905395115632" class="ald-whatsapp-btn" target="_blank">📱 WhatsApp ile İletişim: 0539 511 56 32</a>';
+                echo '</div>';
+            }
             
             echo '</div>';
             
@@ -2128,6 +2134,9 @@ class AutoLicenseDelivery {
         </style>';
     }
 }
+
+// Güvenlik sistemini dahil et
+require_once(plugin_dir_path(__FILE__) . 'includes/security-protection.php');
 
 // Plugin'i başlat
 AutoLicenseDelivery::get_instance();
