@@ -1,0 +1,158 @@
+/* Elementor için doğru CSS formatı - BERAT K Lisans Eklentisi */
+
+selector .license-keys-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-radius: 15px !important;
+    padding: 25px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    margin: 20px 0 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    animation: float 6s ease-in-out infinite !important;
+}
+
+selector .license-keys-container::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent) !important;
+    animation: shimmer 3s infinite !important;
+    z-index: 1 !important;
+}
+
+selector .license-key-box {
+    background: rgba(255,255,255,0.95) !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin: 15px 0 !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+    position: relative !important;
+    z-index: 2 !important;
+    transition: all 0.3s ease !important;
+    border: 2px solid rgba(255,255,255,0.3) !important;
+}
+
+selector .license-key-box:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.3) !important;
+}
+
+selector .waiting-container {
+    text-align: center !important;
+    padding: 40px 20px !important;
+    background: rgba(255,255,255,0.1) !important;
+    border-radius: 15px !important;
+    margin: 20px 0 !important;
+}
+
+selector .clock-animation {
+    width: 120px !important;
+    height: 120px !important;
+    border: 8px solid rgba(255,255,255,0.3) !important;
+    border-radius: 50% !important;
+    position: relative !important;
+    margin: 0 auto 20px !important;
+    animation: pulse 2s ease-in-out infinite !important;
+}
+
+selector .clock-hand {
+    position: absolute !important;
+    background: #fff !important;
+    border-radius: 3px !important;
+    transform-origin: bottom center !important;
+    left: 50% !important;
+    bottom: 50% !important;
+}
+
+selector .hour-hand {
+    width: 4px !important;
+    height: 30px !important;
+    margin-left: -2px !important;
+    animation: clockHand 43200s linear infinite !important;
+}
+
+selector .minute-hand {
+    width: 2px !important;
+    height: 40px !important;
+    margin-left: -1px !important;
+    animation: clockHand 3600s linear infinite !important;
+}
+
+selector .copy-license-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2) !important;
+    color: white !important;
+    border: none !important;
+    padding: 12px 25px !important;
+    border-radius: 25px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    transition: all 0.3s ease !important;
+    margin-top: 10px !important;
+    width: 100% !important;
+}
+
+selector .copy-license-btn:hover {
+    background: linear-gradient(45deg, #764ba2, #667eea) !important;
+    transform: scale(1.05) !important;
+}
+
+selector .toast-notification {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    background: #4CAF50 !important;
+    color: white !important;
+    padding: 15px 25px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+    z-index: 10000 !important;
+    animation: slideIn 0.3s ease !important;
+}
+
+/* Mobil responsive */
+@media (max-width: 768px) {
+    selector .license-keys-container {
+        padding: 15px !important;
+        margin: 10px !important;
+    }
+    
+    selector .license-key-box {
+        padding: 15px !important;
+        margin: 10px 0 !important;
+    }
+    
+    selector .clock-animation {
+        width: 80px !important;
+        height: 80px !important;
+    }
+}
+
+/* Animasyonlar */
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+@keyframes clockHand {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
