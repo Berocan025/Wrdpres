@@ -1,0 +1,341 @@
+/* 🎯 BERAT K - Lisans Anahtarları Modern Tasarım - ACIL CSS */
+
+.ald-modern-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.ald-header {
+    text-align: center !important;
+    margin-bottom: 40px !important;
+    padding: 30px 20px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-radius: 20px !important;
+    color: white !important;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3) !important;
+}
+
+.ald-header h2 {
+    margin: 0 0 10px 0 !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    color: white !important;
+}
+
+.ald-header p {
+    margin: 0 !important;
+    font-size: 16px !important;
+    opacity: 0.9 !important;
+    color: white !important;
+}
+
+.ald-card {
+    background: white !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    margin-bottom: 30px !important;
+    overflow: hidden !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.ald-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.ald-pending-card {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%) !important;
+    border-left: 6px solid #ff9800 !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.ald-pending-card::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent) !important;
+    animation: shimmer 2s infinite !important;
+}
+
+@keyframes shimmer {
+    0% { left: -100% !important; }
+    100% { left: 100% !important; }
+}
+
+.ald-waiting-animation {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 30px !important;
+    position: relative !important;
+}
+
+.ald-clock {
+    width: 80px !important;
+    height: 80px !important;
+    border: 4px solid #ff9800 !important;
+    border-radius: 50% !important;
+    position: relative !important;
+    margin-right: 20px !important;
+    animation: pulse 2s infinite !important;
+}
+
+.ald-clock::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 30px !important;
+    height: 2px !important;
+    background: #ff9800 !important;
+    transform-origin: left center !important;
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+    animation: clockHand 4s linear infinite !important;
+}
+
+.ald-clock::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 20px !important;
+    height: 2px !important;
+    background: #f57c00 !important;
+    transform-origin: left center !important;
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+    animation: clockHand 1s linear infinite !important;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1) !important; }
+    50% { transform: scale(1.1) !important; }
+}
+
+@keyframes clockHand {
+    from { transform: translate(-50%, -50%) rotate(0deg) !important; }
+    to { transform: translate(-50%, -50%) rotate(360deg) !important; }
+}
+
+.ald-waiting-text {
+    text-align: center !important;
+}
+
+.ald-waiting-title {
+    font-size: 24px !important;
+    font-weight: bold !important;
+    color: #e65100 !important;
+    margin: 0 0 10px 0 !important;
+}
+
+.ald-waiting-subtitle {
+    color: #ff9800 !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+}
+
+.ald-license-card {
+    padding: 25px !important;
+    border-bottom: 1px solid #f5f5f5 !important;
+}
+
+.ald-license-card:last-child {
+    border-bottom: none !important;
+}
+
+.ald-license-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 20px !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+.ald-product-name {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    margin: 0 !important;
+}
+
+.ald-license-date {
+    color: #666 !important;
+    font-size: 14px !important;
+    background: #f8f9fa !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+}
+
+.ald-license-key-box {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 2px solid #28a745 !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    position: relative !important;
+    margin: 15px 0 !important;
+    overflow: hidden !important;
+}
+
+.ald-license-key-box::before {
+    content: "🔑" !important;
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    font-size: 20px !important;
+    opacity: 0.3 !important;
+}
+
+.ald-license-key-label {
+    font-size: 12px !important;
+    color: #666 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    margin-bottom: 10px !important;
+    font-weight: 600 !important;
+}
+
+.ald-license-key-value {
+    font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #28a745 !important;
+    word-break: break-all !important;
+    margin: 0 0 15px 0 !important;
+    line-height: 1.4 !important;
+}
+
+.ald-copy-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 25px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+}
+
+.ald-copy-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+}
+
+.ald-copy-btn.copied {
+    background: linear-gradient(135deg, #fd7e14 0%, #e55a2b 100%) !important;
+    animation: copied 0.5s ease !important;
+}
+
+@keyframes copied {
+    0% { transform: scale(1) !important; }
+    50% { transform: scale(1.1) !important; }
+    100% { transform: scale(1) !important; }
+}
+
+.ald-empty-state {
+    text-align: center !important;
+    padding: 80px 20px !important;
+    background: white !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+.ald-empty-icon {
+    font-size: 80px !important;
+    margin-bottom: 20px !important;
+    opacity: 0.3 !important;
+    animation: float 3s ease-in-out infinite !important;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) !important; }
+    50% { transform: translateY(-10px) !important; }
+}
+
+.ald-developer-footer {
+    margin-top: 40px !important;
+    padding: 25px !important;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+    border-radius: 20px !important;
+    text-align: center !important;
+    border: 2px solid #90caf9 !important;
+}
+
+.ald-whatsapp-btn {
+    display: inline-block !important;
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%) !important;
+    color: white !important;
+    text-decoration: none !important;
+    padding: 12px 24px !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    margin-top: 10px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3) !important;
+}
+
+.ald-whatsapp-btn:hover {
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4) !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .ald-header {
+        padding: 20px 15px !important;
+        margin-bottom: 20px !important;
+    }
+    .ald-header h2 {
+        font-size: 24px !important;
+    }
+    .ald-license-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    .ald-license-card {
+        padding: 20px 15px !important;
+    }
+    .ald-waiting-animation {
+        flex-direction: column !important;
+        padding: 20px !important;
+    }
+    .ald-clock {
+        margin-right: 0 !important;
+        margin-bottom: 15px !important;
+    }
+    .ald-license-key-value {
+        font-size: 14px !important;
+    }
+    .ald-copy-btn {
+        padding: 8px 16px !important;
+        font-size: 12px !important;
+    }
+    .ald-empty-state {
+        padding: 40px 15px !important;
+    }
+    .ald-empty-icon {
+        font-size: 60px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .ald-header h2 {
+        font-size: 20px !important;
+    }
+    .ald-waiting-title {
+        font-size: 20px !important;
+    }
+    .ald-product-name {
+        font-size: 18px !important;
+    }
+    .ald-license-key-value {
+        font-size: 12px !important;
+    }
+}
