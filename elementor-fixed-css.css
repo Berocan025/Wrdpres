@@ -1,0 +1,242 @@
+/* DOĞRU CSS - BERAT K Lisans Eklentisi - Elementor Uyumlu */
+
+/* Ana container */
+selector .ald-modern-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Header kısmı */
+selector .ald-header {
+    text-align: center !important;
+    margin-bottom: 40px !important;
+    padding: 30px 20px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-radius: 20px !important;
+    color: white !important;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3) !important;
+    animation: float 6s ease-in-out infinite !important;
+}
+
+/* Lisans kartları */
+selector .ald-card {
+    background: white !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    margin-bottom: 30px !important;
+    overflow: hidden !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    position: relative !important;
+}
+
+selector .ald-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Bekleyen kartlar için özel stil */
+selector .ald-pending-card {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%) !important;
+    border-left: 6px solid #ff9800 !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Shimmer efekti */
+selector .ald-pending-card::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent) !important;
+    animation: shimmer 2s infinite !important;
+    z-index: 1 !important;
+}
+
+/* Bekleme animasyon container */
+selector .ald-waiting-animation {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 30px !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Saat animasyonu */
+selector .ald-clock {
+    width: 80px !important;
+    height: 80px !important;
+    border: 4px solid #ff9800 !important;
+    border-radius: 50% !important;
+    position: relative !important;
+    margin-right: 20px !important;
+    animation: pulse 2s infinite !important;
+}
+
+/* Saat ibresi animasyonları */
+selector .ald-clock::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 30px !important;
+    height: 2px !important;
+    background: #ff9800 !important;
+    transform-origin: left center !important;
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+    animation: clockHand 4s linear infinite !important;
+}
+
+selector .ald-clock::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 20px !important;
+    height: 2px !important;
+    background: #f57c00 !important;
+    transform-origin: left center !important;
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+    animation: clockHand 1s linear infinite !important;
+}
+
+/* Lisans anahtar kutusu */
+selector .ald-license-key-box {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 2px solid #28a745 !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    position: relative !important;
+    margin: 15px 0 !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease !important;
+}
+
+selector .ald-license-key-box:hover {
+    transform: scale(1.02) !important;
+    box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3) !important;
+}
+
+/* Lisans anahtar değeri */
+selector .ald-license-key-value {
+    font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #28a745 !important;
+    word-break: break-all !important;
+    margin: 0 0 15px 0 !important;
+    line-height: 1.4 !important;
+    background: rgba(40, 167, 69, 0.1) !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+}
+
+/* Kopyala butonu */
+selector .ald-copy-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 25px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+}
+
+selector .ald-copy-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%) !important;
+}
+
+/* Kopyalandı efekti */
+selector .ald-copy-btn.copied {
+    background: linear-gradient(135deg, #fd7e14 0%, #e55a2b 100%) !important;
+    animation: copied 0.5s ease !important;
+}
+
+/* Geliştirici footer */
+selector .ald-developer-footer {
+    margin-top: 40px !important;
+    padding: 25px !important;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+    border-radius: 20px !important;
+    text-align: center !important;
+    border: 2px solid #90caf9 !important;
+}
+
+selector .ald-whatsapp-btn {
+    display: inline-block !important;
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%) !important;
+    color: white !important;
+    text-decoration: none !important;
+    padding: 12px 24px !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    margin-top: 10px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3) !important;
+}
+
+selector .ald-whatsapp-btn:hover {
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4) !important;
+}
+
+/* Mobil responsive */
+@media (max-width: 768px) {
+    selector .ald-header {
+        padding: 20px 15px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    selector .ald-waiting-animation {
+        flex-direction: column !important;
+        padding: 20px !important;
+    }
+    
+    selector .ald-clock {
+        margin-right: 0 !important;
+        margin-bottom: 15px !important;
+        width: 60px !important;
+        height: 60px !important;
+    }
+    
+    selector .ald-license-key-value {
+        font-size: 14px !important;
+    }
+}
+
+/* Animasyonlar */
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes clockHand {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes copied {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
