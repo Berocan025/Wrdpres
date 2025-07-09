@@ -104,36 +104,53 @@ class AutoLicenseDelivery {
             add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'plugin_action_links'));
         }
         
+        // Frontend scripts ve styles
+        add_action('wp_enqueue_scripts', array($this, 'frontend_scripts'));
+        
         add_action('woocommerce_product_options_general_product_data', array($this, 'add_license_field'));
         add_action('woocommerce_process_product_meta', array($this, 'save_license_field'));
         add_action('woocommerce_order_status_completed', array($this, 'deliver_license'));
         add_action('woocommerce_order_status_processing', array($this, 'deliver_license'));
         
-        // Pending müşteri yönetimi
+        // AJAX Actions
         add_action('wp_ajax_ald_check_pending_status', array($this, 'ajax_check_pending_status'));
         add_action('wp_ajax_nopriv_ald_check_pending_status', array($this, 'ajax_check_pending_status'));
-        
-        add_filter('woocommerce_account_menu_items', array($this, 'add_account_menu_item'));
-        add_action('init', array($this, 'add_account_endpoints'));
-        add_action('woocommerce_account_license-keys_endpoint', array($this, 'license_keys_content'));
-        
         add_action('wp_ajax_ald_get_license_stats', array($this, 'ajax_get_license_stats'));
         add_action('wp_ajax_ald_save_license_keys', array($this, 'ajax_save_license_keys'));
         add_action('wp_ajax_ald_get_pending_customers', array($this, 'ajax_get_pending_customers'));
         add_action('wp_ajax_ald_process_pending_customers', array($this, 'ajax_process_pending_customers'));
         
-        add_action('wp_ajax_ald_check_pending_status', array($this, 'ajax_check_pending_status'));
-        add_action('wp_ajax_nopriv_ald_check_pending_status', array($this, 'ajax_check_pending_status'));
+        // Account Integration
+        add_filter('woocommerce_account_menu_items', array($this, 'add_account_menu_item'));
+        add_action('init', array($this, 'add_account_endpoints'));
+        add_action('woocommerce_account_license-keys_endpoint', array($this, 'license_keys_content'));
         
+        // Order Integration
         add_action('woocommerce_order_details_after_order_table', array($this, 'display_order_licenses'));
         add_action('woocommerce_email_order_meta', array($this, 'add_license_to_email'), 10, 3);
     }
     
     public function activate() {
         $this->create_tables();
+        $this->upgrade_database();
         flush_rewrite_rules();
         update_option('ald_version', ALD_VERSION);
         update_option('ald_activation_time', current_time('mysql'));
+    }
+    
+    private function upgrade_database() {
+        $current_version = get_option('ald_version', '1.0.0');
+        
+        if (version_compare($current_version, '2.1.0', '<')) {
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ald_license_history';
+            
+            // Yeni kolonları ekle
+            $wpdb->query("ALTER TABLE $table_name ADD COLUMN IF NOT EXISTS pending_sent_at datetime NULL");
+            $wpdb->query("ALTER TABLE $table_name ADD COLUMN IF NOT EXISTS license_sent_at datetime NULL");
+            
+            update_option('ald_version', '2.1.0');
+        }
     }
     
     public function deactivate() {
@@ -223,6 +240,19 @@ class AutoLicenseDelivery {
                 'select_product' => 'Lütfen bir ürün seçin!',
                 'developer' => 'Geliştirici: BERAT K - WhatsApp: +90 539 511 56 32'
             )
+        ));
+    }
+    
+    public function frontend_scripts() {
+        // Sadece WooCommerce account sayfalarında yükle
+        if (!is_wc_endpoint_url('license-keys') && !is_account_page()) {
+            return;
+        }
+        
+        wp_enqueue_script('jquery');
+        wp_localize_script('jquery', 'ald_frontend_ajax', array(
+            'url' => admin_url('admin-ajax.php'),
+            'customer_id' => get_current_user_id()
         ));
     }
     
@@ -1350,310 +1380,7 @@ class AutoLicenseDelivery {
             $customer_id
         ));
         
-        // Modern CSS ve JS dahil et
-        echo '<style>
-        .ald-modern-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-        .ald-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 30px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-        }
-        .ald-header h2 {
-            margin: 0 0 10px 0;
-            font-size: 32px;
-            font-weight: 700;
-        }
-        .ald-header p {
-            margin: 0;
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        .ald-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .ald-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
-        .ald-pending-card {
-            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-            border-left: 6px solid #ff9800;
-            position: relative;
-            overflow: hidden;
-        }
-        .ald-pending-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            animation: shimmer 2s infinite;
-        }
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        .ald-waiting-animation {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            position: relative;
-        }
-        .ald-clock {
-            width: 80px;
-            height: 80px;
-            border: 4px solid #ff9800;
-            border-radius: 50%;
-            position: relative;
-            margin-right: 20px;
-            animation: pulse 2s infinite;
-        }
-        .ald-clock::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 30px;
-            height: 2px;
-            background: #ff9800;
-            transform-origin: left center;
-            transform: translate(-50%, -50%) rotate(0deg);
-            animation: clockHand 4s linear infinite;
-        }
-        .ald-clock::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 2px;
-            background: #f57c00;
-            transform-origin: left center;
-            transform: translate(-50%, -50%) rotate(0deg);
-            animation: clockHand 1s linear infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        @keyframes clockHand {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        .ald-waiting-text {
-            text-align: center;
-        }
-        .ald-waiting-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #e65100;
-            margin: 0 0 10px 0;
-        }
-        .ald-waiting-subtitle {
-            color: #ff9800;
-            font-size: 16px;
-            margin: 0;
-        }
-        .ald-license-card {
-            padding: 25px;
-            border-bottom: 1px solid #f5f5f5;
-        }
-        .ald-license-card:last-child {
-            border-bottom: none;
-        }
-        .ald-license-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .ald-product-name {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin: 0;
-        }
-        .ald-license-date {
-            color: #666;
-            font-size: 14px;
-            background: #f8f9fa;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-        .ald-license-key-box {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 2px solid #28a745;
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-        .ald-license-key-box::before {
-            content: "🔑";
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 20px;
-            opacity: 0.3;
-        }
-        .ald-license-key-label {
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        .ald-license-key-value {
-            font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
-            font-size: 16px;
-            font-weight: bold;
-            color: #28a745;
-            word-break: break-all;
-            margin: 0 0 15px 0;
-            line-height: 1.4;
-        }
-        .ald-copy-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        }
-        .ald-copy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-        }
-        .ald-copy-btn.copied {
-            background: linear-gradient(135deg, #fd7e14 0%, #e55a2b 100%);
-            animation: copied 0.5s ease;
-        }
-        @keyframes copied {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .ald-empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        .ald-empty-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        .ald-developer-footer {
-            margin-top: 40px;
-            padding: 25px;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border-radius: 20px;
-            text-align: center;
-            border: 2px solid #90caf9;
-        }
-        .ald-whatsapp-btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
-            color: white;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-        }
-        .ald-whatsapp-btn:hover {
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-        }
-        
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .ald-header {
-                padding: 20px 15px;
-                margin-bottom: 20px;
-            }
-            .ald-header h2 {
-                font-size: 24px;
-            }
-            .ald-license-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .ald-license-card {
-                padding: 20px 15px;
-            }
-            .ald-waiting-animation {
-                flex-direction: column;
-                padding: 20px;
-            }
-            .ald-clock {
-                margin-right: 0;
-                margin-bottom: 15px;
-            }
-            .ald-license-key-value {
-                font-size: 14px;
-            }
-            .ald-copy-btn {
-                padding: 8px 16px;
-                font-size: 12px;
-            }
-            .ald-empty-state {
-                padding: 40px 15px;
-            }
-            .ald-empty-icon {
-                font-size: 60px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .ald-header h2 {
-                font-size: 20px;
-            }
-            .ald-waiting-title {
-                font-size: 20px;
-            }
-            .ald-product-name {
-                font-size: 18px;
-            }
-            .ald-license-key-value {
-                font-size: 12px;
-            }
-        }
-        </style>';
+        echo $this->get_modern_customer_styles();
         
         echo '<div class="ald-modern-container">';
         echo '<div class="ald-header">';
@@ -1957,6 +1684,312 @@ class AutoLicenseDelivery {
                 echo '</div>';
             }
         }
+    }
+    
+    private function get_modern_customer_styles() {
+        return '<style>
+        .ald-modern-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .ald-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .ald-header h2 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .ald-header p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .ald-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .ald-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        .ald-pending-card {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 6px solid #ff9800;
+            position: relative;
+            overflow: hidden;
+        }
+        .ald-pending-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        .ald-waiting-animation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            position: relative;
+        }
+        .ald-clock {
+            width: 80px;
+            height: 80px;
+            border: 4px solid #ff9800;
+            border-radius: 50%;
+            position: relative;
+            margin-right: 20px;
+            animation: pulse 2s infinite;
+        }
+        .ald-clock::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 2px;
+            background: #ff9800;
+            transform-origin: left center;
+            transform: translate(-50%, -50%) rotate(0deg);
+            animation: clockHand 4s linear infinite;
+        }
+        .ald-clock::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            background: #f57c00;
+            transform-origin: left center;
+            transform: translate(-50%, -50%) rotate(0deg);
+            animation: clockHand 1s linear infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes clockHand {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .ald-waiting-text {
+            text-align: center;
+        }
+        .ald-waiting-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e65100;
+            margin: 0 0 10px 0;
+        }
+        .ald-waiting-subtitle {
+            color: #ff9800;
+            font-size: 16px;
+            margin: 0;
+        }
+        .ald-license-card {
+            padding: 25px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .ald-license-card:last-child {
+            border-bottom: none;
+        }
+        .ald-license-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .ald-product-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        .ald-license-date {
+            color: #666;
+            font-size: 14px;
+            background: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        .ald-license-key-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #28a745;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .ald-license-key-box::before {
+            content: "🔑";
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+            opacity: 0.3;
+        }
+        .ald-license-key-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .ald-license-key-value {
+            font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: #28a745;
+            word-break: break-all;
+            margin: 0 0 15px 0;
+            line-height: 1.4;
+        }
+        .ald-copy-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        .ald-copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        .ald-copy-btn.copied {
+            background: linear-gradient(135deg, #fd7e14 0%, #e55a2b 100%);
+            animation: copied 0.5s ease;
+        }
+        @keyframes copied {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .ald-empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .ald-empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .ald-developer-footer {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid #90caf9;
+        }
+        .ald-whatsapp-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+        .ald-whatsapp-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .ald-header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            .ald-header h2 {
+                font-size: 24px;
+            }
+            .ald-license-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .ald-license-card {
+                padding: 20px 15px;
+            }
+            .ald-waiting-animation {
+                flex-direction: column;
+                padding: 20px;
+            }
+            .ald-clock {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            .ald-license-key-value {
+                font-size: 14px;
+            }
+            .ald-copy-btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .ald-empty-state {
+                padding: 40px 15px;
+            }
+            .ald-empty-icon {
+                font-size: 60px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .ald-header h2 {
+                font-size: 20px;
+            }
+            .ald-waiting-title {
+                font-size: 20px;
+            }
+            .ald-product-name {
+                font-size: 18px;
+            }
+            .ald-license-key-value {
+                font-size: 12px;
+            }
+        }
+        </style>';
     }
 }
 
